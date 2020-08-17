@@ -1,0 +1,71 @@
+<html>
+<head>
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="row m-0">
+    <div class="col-md-6">
+    </div>
+    <div class="col-md-1">
+        <span id="label_item">{{action}}</span>
+    </div>
+</div>
+<div class="row m-0">
+    <div class="col-md-8">
+        <img id="img_label" class="img-fluid" src="{{url_for('static', filename='')}}"/>
+    </div>
+    <div class="col-md-4">
+        <label for="correct">correct</label>
+        <input type="text" id="correct"><br>
+        <label for="other">other</label>
+        <input type="text" id="other"><br>
+        <label for="error">error</label>
+        <input type="text" id="error"><br>
+        <button onclick="submit_and_change()">Submit</button>
+    </div>
+</div>
+<div class="row m-0">
+    <div class="col-md-10">
+    </div>
+        <div class="col-md-1">
+        <span id="exist_num">{{ length | tojson }}</span>
+    </div>
+</div>
+
+</body>
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+        crossorigin="anonymous"></script>
+<script>
+    $(document).ready ( function () {
+        document.getElementById("img_label").src = start + file_array[0]
+    })
+</script>
+<script>
+    var file_array = {{ file_name | tojson }};
+    var file_index = 0;
+    var start = {{ start | tojson }};
+    var exist_num = parseInt({{ length | tojson }});
+    function submit_and_change() {
+        let correct = $("#correct").val();
+        let other = $("#other").val();
+        let error = $("#error").val();
+
+        $.ajax({
+            type: "POST",
+            url: 'label_data',
+            data: {name: file_array[file_index], correct: correct, other: other, error: error},
+        });
+        file_index = file_index + 1
+        document.getElementById("img_label").src = start + file_array[file_index]
+        $("#error").val("")
+        $("#correct").val("")
+        $("#other").val("")
+        exist_num = exist_num -1
+        $("#exist_num").text(exist_num)
+        $("#correct").focus();
+    }
+</script>
+</html>
